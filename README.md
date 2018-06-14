@@ -6,7 +6,7 @@ Arranges images from a twitter search according to a square t-sne using the [Jon
 ![](docs/examples/#cardi.jpg)
 
 ## `#bitcoin`
-![](docs/examples/#bitcoin.jpg)
+![](docs/examples/bitcoin.jpg)
 
 ## `#ALLCAPS`
 ![](docs/examples/#allcaps.jpg)

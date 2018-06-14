@@ -6,7 +6,7 @@
 ![](docs/examples/cardi.jpg)
 
 ## Christ Amen
-![](docs/examples/christ amen.jpg)
+![](docs/examples/christamen.jpg)
 
 ## cute
 ![](docs/examples/cute.jpg)

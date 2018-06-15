@@ -11,9 +11,6 @@ import sys
 max_total = 180
 word = sys.argv[1]
 
-save_dest = 'data/users/{}'.format(word)
-os.system('mkdir -p "{}"'.format(save_dest))
-
 save_dest2 = 'data/profile_image/{}'.format(word)
 os.system('mkdir -p "{}"'.format(save_dest2))
 
@@ -37,11 +34,6 @@ for tweet in tweepy.Cursor(api.search,
     user = js["user"]
     user_id = user["id_str"]
 
-    f_save = os.path.join(save_dest, user_id)
-        
-    if os.path.exists(f_save):
-        continue
-
     key = "profile_image_url"
     if key not in user:
         continue
@@ -54,6 +46,12 @@ for tweet in tweepy.Cursor(api.search,
         continue
         
     url = url.replace('_normal.', '.')
+
+    f_save2 = os.path.join(save_dest2, user_id)   
+    if os.path.exists(f_save2):
+        continue
+
+
         
     try:
         r = requests.get(url, stream=True)
@@ -66,8 +64,8 @@ for tweet in tweepy.Cursor(api.search,
     with open(f_save2, 'wb') as out_file:
         shutil.copyfileobj(r.raw, out_file)
 
-    with codecs.open(f_save, 'w', 'utf-8') as FOUT:
-        FOUT.write( json.dumps(user, indent=2) )
+    #with codecs.open(f_save, 'w', 'utf-8') as FOUT:
+    #    FOUT.write( json.dumps(user, indent=2) )
 
     jprint(user)
     progress.update()

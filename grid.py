@@ -72,7 +72,7 @@ def get_activations(model, img_collection):
         if idx == to_plot:
             break;
         print("Processing image {}".format(idx+1))
-        img = img.resize((224, 224), Image.ANTIALIAS)
+        #img = img.resize((224, 224), Image.ANTIALIAS)
         x = image.img_to_array(img)
         x = np.expand_dims(x, axis=0)
         x = preprocess_input(x)

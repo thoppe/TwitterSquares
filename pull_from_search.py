@@ -8,7 +8,7 @@ import requests
 import shutil
 import sys
 
-max_total = 180
+max_total = 100**2
 word = sys.argv[1]
 
 save_dest2 = 'data/profile_image/{}'.format(word)

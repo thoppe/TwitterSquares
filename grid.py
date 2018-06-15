@@ -9,12 +9,14 @@ from PIL import Image
 from lapjv import lapjv
 from sklearn.manifold import TSNE
 from scipy.spatial.distance import cdist
-from tensorflow.python.keras.applications.vgg16 import VGG16
-from keras.applications.vgg16 import preprocess_input
+
 from tensorflow.python.keras.preprocessing import image
-from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.python.keras.models import Model, Sequential
-from tensorflow.python.keras.layers import Flatten
+from keras.applications.vgg16 import preprocess_input
+
+from tqdm import tqdm
+
+from model import build_model
+import cv2
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--size', type=int, help="number of small images in a row/column in output image")
@@ -50,29 +52,30 @@ if os.path.exists(args.path):
 else:
     raise argparse.ArgumentTypeError("'{}' not a valid directory.".format(out_dir))
 
-def build_model():
-    base_model = VGG16(weights='imagenet')
-    top_model = Sequential()
-    top_model.add(Flatten(input_shape=base_model.output_shape[1:]))
-    return Model(inputs=base_model.input, outputs=top_model(base_model.output))
+
 
 def load_img(in_dir):
     pred_img = [f for f in os.listdir(in_dir) if os.path.isfile(os.path.join(in_dir, f))]
     img_collection = []
     for idx, img in enumerate(pred_img):
-        img = os.path.join(in_dir, img)
-        img_collection.append(image.load_img(img, target_size=(out_res, out_res)))
+
+        img = cv2.imread(os.path.join(in_dir, img))
+        img = img[:,:,::-1]  # BGR to RGB
+        img_collection.append(img)
+
     if (np.square(out_dim) > len(img_collection)):
         raise ValueError("Cannot fit {} images in {}x{} grid".format(len(img_collection), out_dim, out_dim))
+
     return img_collection
 
 def get_activations(model, img_collection):
     activations = []
-    for idx, img in enumerate(img_collection):
+    for idx, img in enumerate(tqdm(img_collection)):
         if idx == to_plot:
             break;
-        print("Processing image {}".format(idx+1))
+        #print("Processing image {}".format(idx+1))
         #img = img.resize((224, 224), Image.ANTIALIAS)
+        
         x = image.img_to_array(img)
         x = np.expand_dims(x, axis=0)
         x = preprocess_input(x)

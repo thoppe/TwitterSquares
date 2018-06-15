@@ -1,3 +1,4 @@
+import os
 import tweepy
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
@@ -12,6 +13,7 @@ from pygments.formatters import TerminalFormatter
 
 # Read Credentials
 Config = configparser.ConfigParser()
+assert(os.path.exists("credentials.ini"))
 Config.read("credentials.ini")
 consumer_key = Config.get("TwitterCredentials","consumer_key")
 consumer_secret = Config.get("TwitterCredentials","consumer_secret")

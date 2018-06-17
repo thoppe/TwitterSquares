@@ -120,7 +120,7 @@ def main():
     print("Generating 2D representation.")
     X_2d = generate_tsne(activations)
     print("Generating image grid.")
-    save_tsne_grid(img_collection, X_2d, out_res, out_dim)
+    save_tsne_grid(img_collection, X_2d, out_res, int(np.sqrt(out_dim)))
 
 if __name__ == '__main__':
     main()

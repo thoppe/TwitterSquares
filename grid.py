@@ -17,15 +17,21 @@ from model import VGG_model
 import cv2
 import random
 
-
 parser = argparse.ArgumentParser()
-parser.add_argument('-s', '--size', type=int, help="number of small images in a row/column in output image")
-parser.add_argument('-d', '--dir', type=str, help="source directory for images")
-parser.add_argument('-r', '--res', type=int, default=224, help="width/height of output square image")
-parser.add_argument('-n', '--name', type=str, default='tsne_grid.jpg', help='name of output image file')
-parser.add_argument('-p', '--path', type=str, default='./', help="destination directory for output image")
-parser.add_argument('-x', '--per', type=int, default=50, help="tsne perplexity")
-parser.add_argument('-i', '--iter', type=int, default=5000, help="number of iterations in tsne algorithm")
+parser.add_argument('-s', '--size', type=int,
+                    help="images in a row/column in output image")
+parser.add_argument('-d', '--dir', type=str,
+                    help="source directory for images")
+parser.add_argument('-r', '--res', type=int, default=224,
+                    help="width/height of output square image")
+parser.add_argument('-n', '--name', type=str, default='tsne_grid.jpg',
+                    help='name of output image file')
+parser.add_argument('-p', '--path', type=str, default='./',
+                    help="destination directory for output image")
+parser.add_argument('-x', '--per', type=int, default=50,
+                    help="tsne perplexity")
+parser.add_argument('-i', '--iter', type=int, default=5000,
+                    help="number of iterations in tsne algorithm")
 
 args = parser.parse_args()
 out_res = args.res
@@ -73,12 +79,6 @@ def load_img(in_dir):
 
     return img_collection
 
-def get_activations(clf, img_collection):
-    activations = []
-    for idx, img in enumerate(tqdm(img_collection)):
-        activations.append(clf.predict(img))
-
-    return activations
 
 def generate_tsne(activations):
     tsne = TSNE(
@@ -113,9 +113,7 @@ def save_tsne_grid(img_collection, X_2d, out_res, out_dim):
 def main():
     clf = VGG_model()
     img_collection = load_img(in_dir)
-
-    activations = get_activations(clf, img_collection)
-    print (activations[0])
+    activations = list(map(clf.predict, tqdm(img_collection)))
 
     print("Generating 2D representation.")
     X_2d = generate_tsne(activations)

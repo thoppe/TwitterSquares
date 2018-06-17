@@ -2,7 +2,6 @@ import numpy as np
 
 from tensorflow.python.keras.applications.vgg16 import VGG16
 
-from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.models import Model, Sequential
 from tensorflow.python.keras.layers import Flatten
 

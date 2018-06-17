@@ -1,0 +1,18 @@
+# For scraping
+tweepy
+requests
+
+# NLP, formatting, and utils
+pygments
+unidecode
+tqdm
+
+# Image and numerical libs
+opencv-python
+numpy
+tensorflow
+matplotlib
+Pillow
+lapjv
+sklearn
+scipy

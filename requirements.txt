@@ -6,6 +6,7 @@ requests
 pygments
 unidecode
 tqdm
+docopt
 
 # Image and numerical libs
 opencv-python

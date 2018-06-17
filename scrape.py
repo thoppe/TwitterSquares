@@ -1,4 +1,13 @@
-from scrape_utils import auth, jprint
+"""Scape data for Twitter Squares
+
+Usage:
+  scrape.py <term> <n_images>
+
+Options:
+  -h --help       Show this screen.
+"""
+
+from utils import auth, jprint
 from tweepy.streaming import StreamListener
 from tweepy import Stream
 import tweepy
@@ -8,19 +17,22 @@ import requests
 import shutil
 import sys
 
-max_total = 100**2
-word = sys.argv[1]
+from docopt import docopt
+dargs = docopt(__doc__)
 
-save_dest2 = 'data/profile_image/{}'.format(word)
+total_images = int(dargs["<n_images>"])
+name = dargs["<term>"]
+
+save_dest2 = 'data/profile_image/{}'.format(name)
 os.system('mkdir -p "{}"'.format(save_dest2))
 
-progress = tqdm(total=max_total)
+progress = tqdm(total=total_images)
 api = tweepy.API(auth)
-search_results = api.search(q=word, lang='en', count=10)
+search_results = api.search(q=name, lang='en', count=10)
 count = 0
 
 for tweet in tweepy.Cursor(api.search,
-                           q=word,
+                           q=name,
                            rpp=100,
                            result_type="recent",
                            include_entities=True,
@@ -71,7 +83,7 @@ for tweet in tweepy.Cursor(api.search,
     progress.update()
     
     count += 1
-    if count >= max_total: break
+    if count >= total_images: break
         
         
 progress.close()

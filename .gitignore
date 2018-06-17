@@ -1,2 +1,9 @@
+# Temp files
 *~
+__pycache__/*
+
+# Don't save the keys!
 credentials.ini
+
+# Don't add generated files
+data/*

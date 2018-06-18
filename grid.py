@@ -4,7 +4,20 @@
 import numpy as np
 from lapjv import lapjv
 from scipy.spatial.distance import cdist
+import time
 
+def timeit(method):
+
+    def timed(*args, **kw):
+        t0 = time.time()
+        result = method(*args, **kw)
+        t1 = time.time()
+        print (f" - Function {method.__name__} took {t1-t0:2.2f} seconds")
+        return result
+
+    return timed
+
+@timeit
 def generate_tsne(activations, perplexity=50, tsne_iter=5000):
     # Run tSNE in parallel if the proper library is installed
 
@@ -26,7 +39,7 @@ def generate_tsne(activations, perplexity=50, tsne_iter=5000):
     X /= X.max(axis=0)
     return X
 
-
+@timeit
 def fit_to_grid(IMG, X_2d, n, out_res=224):
     grid = np.dstack(np.meshgrid(
         np.linspace(0, 1, n),

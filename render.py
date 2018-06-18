@@ -1,10 +1,11 @@
 """Render Twitter Squares
 
 Usage:
-  render.py <term> <n_images>
+  render.py <term> <n_images> [--resolution=<n>]
 
 Options:
-  -h --help       Show this screen.
+  -h --help            Show this screen.
+  -r --resolution=<n>  Output resolution [default: 1200]
 
 """
 
@@ -21,6 +22,7 @@ dargs = docopt(__doc__)
 
 total_images = int(dargs["<n_images>"])
 square_n = int(np.sqrt(total_images))
+resolution = int(dargs["--resolution"])
 
 if square_n**2 != total_images:
     raise ValueError(f"<n_images={total_images}> must be a square number!")
@@ -150,8 +152,13 @@ if __name__ == "__main__":
     print("Running Jonker-Volgenan")
     img = fit_to_grid(IMG, X, square_n, out_res=model_img_size)
 
+    print("Resizing image")
+    img = cv2.resize(
+        img, (resolution, resolution), interpolation=cv2.INTER_CUBIC)
+
     f_img_save = os.path.join(figure_dest, f"{name}.jpg")
-    cv2.imwrite(f_img_save, img)
+    cv2.imwrite(
+        f_img_save, img, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
     print (f"Saved output image to {f_img_save}")
 
     os.system(f'eog "figures/{name}.jpg"')

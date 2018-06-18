@@ -1,29 +1,30 @@
 import numpy as np
 
-from tensorflow.python.keras.applications.vgg16 import VGG16
+from keras.models import Model, Sequential
+from keras.layers import Flatten
 
-from tensorflow.python.keras.models import Model, Sequential
-from tensorflow.python.keras.layers import Flatten
-
-from tensorflow.python.keras.preprocessing import image
+from keras.applications.vgg16 import VGG16 as DL
 from keras.applications.vgg16 import preprocess_input
 
-class VGG_model():
+#from keras.applications.inception_resnet_v2 import InceptionResNetV2 as DL
+#from keras.applications.inception_resnet_v2 import preprocess_input
+
+#from keras.applications.xception import Xception as DL
+#from keras.applications.xception import preprocess_input
+
+#from keras.applications.densenet import DenseNet169 as DL
+#from keras.applications.densenet import preprocess_input
+
+
+class layer_model():
 
     def __init__(self):
-        self.model = self.build_model()
+        self.model = DL(weights='imagenet')
 
-    def build_model(self):
-        base_model = VGG16(weights='imagenet')
-        top_model = Sequential()
-        top_model.add(Flatten(input_shape=base_model.output_shape[1:]))
-        return Model(
-            inputs=base_model.input, outputs=top_model(base_model.output))
+    def predict(self, x):
 
-    def predict(self, img):
-        
-        x = image.img_to_array(img)
         x = np.expand_dims(x, axis=0)
         x = preprocess_input(x)
 
-        return np.squeeze(self.model.predict(x))
+        pred = np.squeeze(self.model.predict(x))
+        return pred

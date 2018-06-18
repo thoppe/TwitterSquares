@@ -26,7 +26,8 @@ if square_n**2 != total_images:
     raise ValueError(f"<n_images={total_images}> must be a square number!")
 
 max_image_row_size = 20
-VGG_size = 224
+model_img_size = 224
+#model_img_size = 299
 
 name = dargs["<term>"]
 load_dest = f"data/profile_image/{name}"
@@ -36,7 +37,7 @@ activations_dest = f"data/activations/{name}"
 figure_dest = "figures/"
 
 def resize_and_crop(f0):
-    # Resize all the images to the base shape of (VGG_size,VGG_size)
+    # Resize all the images to the base shape of (model_img_size,model_img_size)
     # Center crop non-square images
 
     f1 = os.path.join(subimage_dest, os.path.basename(f0)) + '.jpg'
@@ -58,9 +59,9 @@ def resize_and_crop(f0):
         dy = y - x
         img = img[:, dy:dy+x, :]
 
-    img = cv2.resize(img, (VGG_size,VGG_size))
+    img = cv2.resize(img, (model_img_size,model_img_size))
     x,y,c = img.shape
-    assert(x==y==VGG_size)
+    assert(x==y==model_img_size)
 
     cv2.imwrite(f1, img)
     #print ("Saved", f1)
@@ -97,9 +98,9 @@ def compute_activations(f0):
 
     global _clf
     if _clf is None:
-        print("Importing VGG model")
-        from model import VGG_model as VGG
-        _clf = VGG()
+        print("Importing classification model")
+        from model import layer_model
+        _clf = layer_model()
 
     img = cv2.imread(f0)
     img = img[:,:,::-1]  # BGR to RGB
@@ -126,6 +127,8 @@ if __name__ == "__main__":
 
     for f0 in tqdm(F_IN):
         resize_and_crop(f0)
+
+    print(f"Largest model possible {int(np.floor(len(F_IN)**0.5)**2)}")
 
     F_IN = set(sorted(glob.glob(os.path.join(subimage_dest, '*'))))
     for f0 in tqdm(F_IN):

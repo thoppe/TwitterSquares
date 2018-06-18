@@ -1,15 +1,8 @@
-
 ## #bitcoin
 ![](docs/examples/bitcoin.jpg)
 
 ## #cardi
 ![](docs/examples/cardi.jpg)
-
-## Christ Amen
-![](docs/examples/christamen.jpg)
-
-## cute
-![](docs/examples/cute.jpg)
 
 ## #fortnite
 ![](docs/examples/fortnite.jpg)

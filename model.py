@@ -23,8 +23,7 @@ class layer_model():
 
     def predict(self, x):
 
-        x = np.expand_dims(x, axis=0)
+        x = np.expand_dims(x, axis=0).astype(float)
         x = preprocess_input(x)
-
         pred = np.squeeze(self.model.predict(x))
         return pred

@@ -1,6 +1,6 @@
 # Twitter Squares
 
-Arranges profile images from a twitter search in a [square t-sne](https://github.com/prabodhhere/tsne-grid/) using the [Jonker-Volgenan](https://blog.sourced.tech/post/lapjv/) algorithm. Features are generated from the final predictions of VGG16/Xception/ResNet.
+Arranges profile images from a twitter search in a [square t-sne](https://github.com/prabodhhere/tsne-grid/) using the [Jonker-Volgenan](https://blog.sourced.tech/post/lapjv/) algorithm. Features are generated from the penultimate predictions of the InceptionResNetV2VGG16 model.
 
 ## `#bitcoin`
 ![](docs/examples/bitcoin.jpg)

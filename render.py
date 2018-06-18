@@ -62,8 +62,29 @@ def resize_and_crop(f0):
     #print ("Saved", f1)
 
 
-_clf = None
+def load_image_data():
 
+    F_INPUT = sorted(glob.glob(os.path.join(subimage_dest, '*')))
+    random.shuffle(F_INPUT)
+    F_INPUT = F_INPUT[:total_images]
+
+    IMG, ACT = [], []
+    for f0 in tqdm(F_INPUT):
+        f1 = os.path.join(activations_dest, os.path.basename(f0))+'.txt'
+        assert(os.path.exists(f1))
+        img = cv2.imread(f0)
+
+        IMG.append(img)
+        ACT.append(np.loadtxt(f1))
+
+    IMG = np.array(IMG)
+    ACT = np.array(ACT)
+    
+    return IMG, ACT
+
+
+
+_clf = None   # Only import the model if we need to score something
 def compute_activations(f0):
 
     f1 = os.path.join(activations_dest, os.path.basename(f0)) + '.txt'
@@ -104,20 +125,21 @@ F_IN = set(sorted(glob.glob(os.path.join(subimage_dest, '*'))))
 for f0 in tqdm(F_IN):
     compute_activations(f0)
 
-
+# Check to make sure we have enough images
 F_IN = set(sorted(glob.glob(os.path.join(activations_dest, '*'))))
 if len(F_IN) < total_images:
     msg = f"Not enough images for {name}, {len(F_IN)}/{total_images}"
     raise ValueError(msg)
 
-#n_found_files = len(glob.glob(os.path.join(subimage_dest, '*')))
-#n_size = total_images
-#print (name, len(F_IN), n_size)
 
-cmd = f"python grid.py -s {total_images} -d '{subimage_dest}' -p {figure_dest} --name '{name}.jpg' -a {activations_dest}"
+IMG, ACT = load_image_data()
 
-print(cmd)
+from grid import generate_tsne, fit_to_grid
+X = generate_tsne(ACT)
+img = fit_to_grid(IMG, X, int(np.sqrt(total_images)))
 
-val = os.system(cmd)
-if not val:
-    os.system(f'eog "figures/{name}.jpg"')
+f_img_save = os.path.join(figure_dest, f"{name}.jpg")
+cv2.imwrite(f_img_save, img)
+print (f"Saved output image to {f_img_save}")
+
+os.system(f'eog "figures/{name}.jpg"')

@@ -14,6 +14,8 @@ Arranges profile images from a twitter search in a [square t-sne](https://github
 
 1] Install the dependencies `pip install -r requirements.txt`.
 
+1b] For faster tSNE, run `pip install git+https://github.com/DmitryUlyanov/Multicore-TSNE`
+
 2] Create a file `credentials.ini` and fill out your information:
 
 ```
@@ -28,3 +30,4 @@ access_token_secret = ...
 
      python scrape.py obama 144
      python render.py obama 144
+

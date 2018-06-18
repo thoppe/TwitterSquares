@@ -3,20 +3,29 @@
 
 import numpy as np
 from lapjv import lapjv
-from sklearn.manifold import TSNE
 from scipy.spatial.distance import cdist
 
 def generate_tsne(activations, perplexity=50, tsne_iter=5000):
-    tsne = TSNE(
-        perplexity=perplexity,
-        n_components=2,
-        n_iter=tsne_iter,
-        init='random', 
-    )
-    X_2d = tsne.fit_transform(np.array(activations))
-    X_2d -= X_2d.min(axis=0)
-    X_2d /= X_2d.max(axis=0)
-    return X_2d
+    # Run tSNE in parallel if the proper library is installed
+
+    args = {
+        "perplexity" : perplexity,
+        "n_components" : 2,
+        "n_iter" : tsne_iter,
+        "init" : "random",    
+    }
+
+    try:
+        from MulticoreTSNE import MulticoreTSNE as TSNE
+        args["n_jobs"] = -1
+    except ModuleNotFoundError:
+        from sklearn.manifold import TSNE
+
+    X = TSNE(**args).fit_transform(np.array(activations))
+    X -= X.min(axis=0)
+    X /= X.max(axis=0)
+    return X
+
 
 def fit_to_grid(IMG, X_2d, n, out_res=224):
     grid = np.dstack(np.meshgrid(

@@ -19,4 +19,5 @@ scipy
 
 # Deep learning (> 1.5 TF breaks some computers)
 keras
-tensorflow==1.5.0
+#tensorflow
+https://github.com/DmitryUlyanov/Multicore-TSNE

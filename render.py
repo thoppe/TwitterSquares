@@ -26,8 +26,9 @@ if square_n**2 != total_images:
     raise ValueError(f"<n_images={total_images}> must be a square number!")
 
 max_image_row_size = 20
-model_img_size = 224
-#model_img_size = 299
+
+#model_img_size = 224
+model_img_size = 299
 
 name = dargs["<term>"]
 load_dest = f"data/profile_image/{name}"
@@ -143,8 +144,11 @@ if __name__ == "__main__":
     IMG, ACT = load_image_data()
 
     from grid import generate_tsne, fit_to_grid
+    print("Generating tSNE coordinates")
     X = generate_tsne(ACT)
-    img = fit_to_grid(IMG, X, square_n)
+
+    print("Running Jonker-Volgenan")
+    img = fit_to_grid(IMG, X, square_n, out_res=model_img_size)
 
     f_img_save = os.path.join(figure_dest, f"{name}.jpg")
     cv2.imwrite(f_img_save, img)

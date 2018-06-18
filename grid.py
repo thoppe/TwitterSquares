@@ -3,18 +3,13 @@
 
 import numpy as np
 import os, argparse
-import tensorflow as tf
 from PIL import Image
 from lapjv import lapjv
 from sklearn.manifold import TSNE
 from scipy.spatial.distance import cdist
-
-from tensorflow.python.keras.preprocessing import image
+import cv2
 
 from tqdm import tqdm
-
-from model import VGG_model
-import cv2
 import random
 
 parser = argparse.ArgumentParser()
@@ -22,6 +17,8 @@ parser.add_argument('-s', '--size', type=int,
                     help="images in a row/column in output image")
 parser.add_argument('-d', '--dir', type=str,
                     help="source directory for images")
+parser.add_argument('-a', '--activations', type=str,
+                    help="source directory for activations")
 parser.add_argument('-r', '--res', type=int, default=224,
                     help="width/height of output square image")
 parser.add_argument('-n', '--name', type=str, default='tsne_grid.jpg',
@@ -59,25 +56,28 @@ else:
     raise argparse.ArgumentTypeError(f"'{args.path}' not a valid directory.")
 
 
-def load_img(in_dir):
-    pred_img = [f for f in os.listdir(in_dir)
-                    if os.path.isfile(os.path.join(in_dir, f))]
-    img_collection = []
+def load_data(in_dir):
 
-    random.shuffle(pred_img)
-    pred_img = pred_img[:out_dim]
+    F_INPUT = os.listdir(in_dir)
+    random.shuffle(F_INPUT)
+    F_INPUT = F_INPUT[:out_dim]
+
+    IMG, ACT = [], []
+    for f0 in tqdm(F_INPUT):
+        f1 = os.path.join(args.activations, os.path.basename(f0))+'.txt'
+        assert(os.path.exists(f1))
+        
+        img = cv2.imread(os.path.join(in_dir, f0))
+
+        IMG.append(img)
+        ACT.append(np.loadtxt(f1))
+
+    IMG = np.array(IMG)
+    ACT = np.array(ACT)
     
-    for idx, img in enumerate(pred_img):
+    print(IMG.shape, ACT.shape)
+    return IMG, ACT
 
-        img = cv2.imread(os.path.join(in_dir, img))
-        img = img[:,:,::-1]  # BGR to RGB
-        img_collection.append(img)
-
-    if (out_dim > len(img_collection)):
-        msg = f"Cannot fit {len(img_collection)} images in {out_dim}x{out_dim} grid"
-        raise ValueError(msg)
-
-    return img_collection
 
 
 def generate_tsne(activations):
@@ -94,10 +94,23 @@ def save_tsne_grid(img_collection, X_2d, out_res, out_dim):
     grid = np.dstack(np.meshgrid(
         np.linspace(0, 1, out_dim),
         np.linspace(0, 1, out_dim))).reshape(-1, 2)
+    
     cost_matrix = cdist(grid, X_2d, "sqeuclidean").astype(np.float32)
+    #print(cost_matrix)
+    #import pylab as plt
+    #plt.matshow(cost_matrix)
+    #plt.show()
+    #exit()
     cost_matrix = cost_matrix * (100000 / cost_matrix.max())
     row_asses, col_asses, _ = lapjv(cost_matrix)
-    grid_jv = grid[col_asses]
+
+    print(row_asses)
+    print(col_asses)
+    print(grid)
+
+    #exit()
+    
+    grid_jv = grid[row_asses]
     out = np.ones((out_dim*out_res, out_dim*out_res, 3))
 
     for pos, img in zip(grid_jv, img_collection[0:to_plot]):
@@ -105,20 +118,16 @@ def save_tsne_grid(img_collection, X_2d, out_res, out_dim):
         w_range = int(np.floor(pos[1]* (out_dim - 1) * out_res))
         out[
             h_range:h_range + out_res,
-            w_range:w_range + out_res]  = image.img_to_array(img)
+            w_range:w_range + out_res]  = img
 
-    im = image.array_to_img(out)
-    im.save(out_dir + out_name, quality=100)
+    cv2.imwrite(out_dir + out_name, out)
 
-def main():
-    clf = VGG_model()
-    img_collection = load_img(in_dir)
-    activations = list(map(clf.predict, tqdm(img_collection)))
-
-    print("Generating 2D representation.")
-    X_2d = generate_tsne(activations)
-    print("Generating image grid.")
-    save_tsne_grid(img_collection, X_2d, out_res, int(np.sqrt(out_dim)))
 
 if __name__ == '__main__':
-    main()
+
+    IMG, ACT = load_data(args.dir)
+    print("Generating 2D representation.")
+    X_2d = generate_tsne(ACT)
+    print("Generating image grid.")
+    save_tsne_grid(IMG, X_2d, out_res, int(np.sqrt(out_dim)))
+

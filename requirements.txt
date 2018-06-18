@@ -11,9 +11,12 @@ docopt
 # Image and numerical libs
 opencv-python
 numpy
-tensorflow
 matplotlib
 Pillow
 lapjv
 sklearn
 scipy
+
+# Deep learning (> 1.5 TF breaks some computers)
+keras
+tensorflow==1.5.0

@@ -7,3 +7,4 @@ credentials.ini
 
 # Don't add generated files
 data/*
+figures/*

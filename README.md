@@ -12,7 +12,9 @@ Arranges profile images from a twitter search in a [square t-sne](https://github
 
 ### Usage
 
-Create a file `credentials.ini` and fill out your information:
+1] Install the dependencies `pip install -r requirements.txt`.
+
+2] Create a file `credentials.ini` and fill out your information:
 
 ```
 [TwitterCredentials]
@@ -22,7 +24,7 @@ access_token = ...
 access_token_secret = ...
 ```
 
-Then to pull hits from the search `obama`
+3] Then to pull 144 (12x12) from the search `obama`
 
-     python pull_from_search.py obama
-     python render.py obama
+     python scrape.py obama 144
+     python render.py obama 144

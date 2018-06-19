@@ -30,6 +30,6 @@ class layer_model():
         x = preprocess_input(x)
         pred = np.squeeze(self.model.predict(x))
 
-        print (pred.shape)
+        #print (pred.shape)
 
         return pred

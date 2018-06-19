@@ -20,4 +20,6 @@ scipy
 # Deep learning (> 1.5 TF breaks some computers)
 keras
 #tensorflow
-https://github.com/DmitryUlyanov/Multicore-TSNE
+
+# Faster TSNE
+-e git://github.com/DmitryUlyanov/Multicore-TSNE.git#egg=MulticoreTSNE

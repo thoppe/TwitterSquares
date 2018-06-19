@@ -32,6 +32,8 @@ def generate_tsne(activations, perplexity=50, tsne_iter=5000):
         from MulticoreTSNE import MulticoreTSNE as TSNE
         args["n_jobs"] = -1
     except ModuleNotFoundError:
+        import warnings
+        warnings.warn("Using slow sklearn TSNE")
         from sklearn.manifold import TSNE
 
     X = TSNE(**args).fit_transform(np.array(activations))
